@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Impressão</title>
+    <style>
+      /* Estilos CSS */
+    </style>
+  </head>
+  <body>
+    <h1>Calculadora de Impressão</h1>
+
+    <div id="cadastro">
+      <h2>Cadastro de Usuário</h2>
+      <input type="text" id="nome" placeholder="Nome" />
+      <input type="email" id="email" placeholder="Email" />
+      <button onclick="cadastrarUsuario()">Cadastrar</button>
+    </div>
+
+    <div id="calculo" style="display: none">
+      <h2>Calcular Custos</h2>
+      <select id="tipo">
+        <option value="pb">P&B</option>
+        <option value="colorido">Colorido</option>
+      </select>
+      <select id="papel">
+        <option value="80g">A4 80g</option>
+        <option value="160g">A4 160g</option>
+      </select>
+      <input
+        type="number"
+        id="qtdPaginas"
+        placeholder="Quantidade de páginas"
+      />
+      <input type="number" id="qtdCopias" placeholder="Quantidade de cópias" />
+      <label for="frente">Frente</label>
+      <input type="checkbox" id="frente" />
+      <label for="verso">Verso</label>
+      <input type="checkbox" id="verso" />
+      <button onclick="calcularCusto()">Calcular</button>
+    </div>
+
+    <div id="resultado" style="display: none">
+      <h2>Resultado</h2>
+      <p id="custo"></p>
+    </div>
+
+    <div id="conta" style="display: none">
+      <h2>Conta</h2>
+      <p id="conta"></p>
+    </div>
+
+    <script>
+      let usuario = null;
+      let encomendas = 0;
+      let paginasDocumento = 0;
+
+      function cadastrarUsuario() {
+        const nome = document.getElementById("nome").value;
+        const email = document.getElementById("email").value;
+        usuario = { nome, email };
+        document.getElementById("calculo").style.display = "block";
+      }
+
+      function calcularCusto() {
+        const tipo = document.getElementById("tipo").value;
+        const papel = document.getElementById("papel").value;
+        const qtdCopias = parseInt(document.getElementById("qtdCopias").value);
+        const qtdPaginas = parseInt(
+          document.getElementById("qtdPaginas").value
+        );
+        const frente = document.getElementById("frente").checked;
+        const verso = document.getElementById("verso").checked;
+
+        let precoPagina;
+
+        if (frente && !verso) {
+          if (tipo === "pb") {
+            if (papel === "80g") precoPagina = 0.12;
+            if (papel === "160g") precoPagina = 0.4;
+            if (papel === "250g") precoPagina = 0.8;
+          } else {
+            if (papel === "80g") precoPagina = 0.45;
+            if (papel === "160g") precoPagina = 1;
+            if (papel === "250g") precoPagina = 1.4;
+          }
+        } else if (frente && verso) {
+          if (tipo === "pb") {
+            if (papel === "80g") precoPagina = 0.1;
+            if (papel === "160g") precoPagina = 0.33;
+            if (papel === "250g") precoPagina = 0.65;
+          } else {
+            if (papel === "80g") precoPagina = 0.43;
+            if (papel === "160g") precoPagina = 0.85;
+            if (papel === "250g") precoPagina = 1.15;
+          }
+        }
+
+        let custo = 0;
+        custo += qtdCopias * qtdPaginas * precoPagina;
+
+        if ((verso && !frente) || (!frente && !verso)) {
+          document.getElementById("resultado").style.display = "block";
+          document.getElementById(
+            "custo"
+          ).textContent = `ERRO: Selecione apenas frente ou frente + verso`;
+        } else {
+          document.getElementById("resultado").style.display = "block";
+          document.getElementById(
+            "custo"
+          ).textContent = `Custo total da impressão: € ${custo.toFixed(2)}`;
+          document.getElementById("conta").style.display = "block";
+          document.getElementById(
+            "conta"
+          ).textContent = `${qtdCopias}, ${qtdPaginas}, ${precoPagina}, ${frente}, ${verso}`;
+        }
+      }
+    </script>
+  </body>
+</html>
